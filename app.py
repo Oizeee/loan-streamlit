@@ -57,6 +57,17 @@ st.divider()
 # Tombol prediksi
 if st.button("🔍 Prediksi Risiko", use_container_width=True):
 
+    # --- PERBAIKAN: konversi ke tipe yang sesuai ---
+    age = int(age)
+    income = float(income)
+    loan_amount = float(loan_amount)
+    credit_score = float(credit_score)
+    months_employed = int(months_employed)
+
+    has_dependents = 1 if has_dependents == "Yes" else 0
+    has_cosigner = 1 if has_cosigner == "Yes" else 0
+
+    # Buat DataFrame input
     input_data = pd.DataFrame([{
         "Age": age,
         "Income": income,
@@ -67,6 +78,10 @@ if st.button("🔍 Prediksi Risiko", use_container_width=True):
         "HasDependents": has_dependents,
         "HasCoSigner": has_cosigner
     }])
+
+    # Debug tipe data (opsional)
+    # st.write(input_data.dtypes)
+    # st.write(input_data)
 
     prediction = model.predict(input_data)[0]
     probability = model.predict_proba(input_data)[0][1] * 100
@@ -89,7 +104,6 @@ if st.button("🔍 Prediksi Risiko", use_container_width=True):
     )
 
     st.info(f"**Level Risiko:** {risk_level}\n\n{risk_desc}")
-
 
     if prediction == 1:
         st.error(
