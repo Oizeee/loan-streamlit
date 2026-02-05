@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-import pickle
+from joblib import load  # Ganti pickle dengan joblib
 
 # Konfigurasi halaman
 st.set_page_config(
@@ -9,9 +9,8 @@ st.set_page_config(
     layout="centered"
 )
 
-# Load model
-with open("loan_default_model.pkl", "rb") as f:
-    model = pickle.load(f)
+# Load model pakai joblib
+model = load("loan_default_model.joblib")  # pastikan nama file sesuai hasil training
 
 # Judul
 st.title("💳 Prediksi Risiko Gagal Bayar Kredit")
@@ -57,18 +56,18 @@ st.divider()
 # Tombol prediksi
 if st.button("🔍 Prediksi Risiko", use_container_width=True):
 
-    # --- PASTIKAN NUMERIC ---
+    # --- Pastikan numeric ---
     age = int(age)
     income = float(income)
     loan_amount = float(loan_amount)
     credit_score = float(credit_score)
     months_employed = int(months_employed)
 
-    # --- UBAH BINARY KE 0/1 ---
+    # --- Ubah binary ke 0/1 ---
     has_dependents = 1 if has_dependents == "Yes" else 0
     has_cosigner = 1 if has_cosigner == "Yes" else 0
 
-    # --- BUAT DATAFRAME input ---
+    # --- Buat dataframe input ---
     input_data = pd.DataFrame([{
         "Age": age,
         "Income": income,
@@ -80,24 +79,13 @@ if st.button("🔍 Prediksi Risiko", use_container_width=True):
         "HasCoSigner": has_cosigner
     }])
 
-    # --- DEBUG (opsional, sebelum prediksi) ---
-    st.write(input_data.dtypes)
-    st.write(input_data)
-
-    # --- PREDIKSI ---
+    # --- Prediksi ---
     try:
         prediction = model.predict(input_data)[0]
         probability = model.predict_proba(input_data)[0][1] * 100
     except Exception as e:
         st.error(f"⚠️ Terjadi error saat prediksi: {e}")
         st.stop()
-
-    # Debug tipe data (opsional)
-    # st.write(input_data.dtypes)
-    # st.write(input_data)
-
-    prediction = model.predict(input_data)[0]
-    probability = model.predict_proba(input_data)[0][1] * 100
 
     st.subheader("📊 Hasil Prediksi")
 
@@ -111,11 +99,11 @@ if st.button("🔍 Prediksi Risiko", use_container_width=True):
     else:
         risk_level = "🔴 Tinggi"
         risk_desc = "Risiko gagal bayar tergolong tinggi."
+
     st.metric(
         label="Persentase Risiko Gagal Bayar",
         value=f"{probability:.2f}%"
     )
-
     st.info(f"**Level Risiko:** {risk_level}\n\n{risk_desc}")
 
     if prediction == 1:
