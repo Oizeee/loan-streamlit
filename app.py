@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from joblib import load  # Ganti pickle dengan joblib
+from joblib import load 
 
 # Konfigurasi halaman
 st.set_page_config(
@@ -10,7 +10,7 @@ st.set_page_config(
 )
 
 # Load model pakai joblib
-model = load("loan_default_model.joblib")  # pastikan nama file sesuai hasil training
+model = load("loan_default_model.joblib")
 
 # Judul
 st.title("💳 Prediksi Risiko Gagal Bayar Kredit")
@@ -56,18 +56,15 @@ st.divider()
 # Tombol prediksi
 if st.button("🔍 Prediksi Risiko", use_container_width=True):
 
-    # --- Pastikan numeric ---
     age = int(age)
     income = float(income)
     loan_amount = float(loan_amount)
     credit_score = float(credit_score)
     months_employed = int(months_employed)
 
-    # --- Ubah binary ke 0/1 ---
     has_dependents = 1 if has_dependents == "Yes" else 0
     has_cosigner = 1 if has_cosigner == "Yes" else 0
 
-    # --- Buat dataframe input ---
     input_data = pd.DataFrame([{
         "Age": age,
         "Income": income,
@@ -79,7 +76,6 @@ if st.button("🔍 Prediksi Risiko", use_container_width=True):
         "HasCoSigner": has_cosigner
     }])
 
-    # --- Prediksi ---
     try:
         prediction = model.predict(input_data)[0]
         probability = model.predict_proba(input_data)[0][1] * 100
@@ -134,3 +130,4 @@ if st.button("🔍 Prediksi Risiko", use_container_width=True):
         )
 
 st.caption("© Aplikasi Prediksi Kredit | Machine Learning + Streamlit")
+
