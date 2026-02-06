@@ -2,17 +2,14 @@ import streamlit as st
 import pandas as pd
 from joblib import load 
 
-# Konfigurasi halaman
 st.set_page_config(
     page_title="Prediksi Risiko Kredit",
     page_icon="💳",
     layout="centered"
 )
 
-# Load model pakai joblib
 model = load("loan_default_model.joblib")
 
-# Judul
 st.title("💳 Prediksi Risiko Gagal Bayar Kredit")
 st.markdown(
     """
@@ -23,7 +20,6 @@ st.markdown(
 
 st.divider()
 
-# Sidebar
 st.sidebar.header("📌 Petunjuk Pengisian")
 st.sidebar.write(
     """
@@ -33,7 +29,6 @@ st.sidebar.write(
     """
 )
 
-# Layout 2 kolom
 col1, col2 = st.columns(2)
 
 with col1:
@@ -53,7 +48,6 @@ with col2:
 
 st.divider()
 
-# Tombol prediksi
 if st.button("🔍 Prediksi Risiko", use_container_width=True):
 
     age = int(age)
@@ -85,7 +79,6 @@ if st.button("🔍 Prediksi Risiko", use_container_width=True):
 
     st.subheader("📊 Hasil Prediksi")
 
-    # Indikator warna risiko
     if probability <= 30:
         risk_level = "🟢 Rendah"
         risk_desc = "Risiko gagal bayar tergolong rendah."
@@ -130,4 +123,5 @@ if st.button("🔍 Prediksi Risiko", use_container_width=True):
         )
 
 st.caption("© Aplikasi Prediksi Kredit | Machine Learning + Streamlit")
+
 
